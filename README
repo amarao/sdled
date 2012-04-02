@@ -1,0 +1,9 @@
+sdled allows to see and change led status for multidisk enclosures.
+
+I'm not sure it will work with every avaible enclosures, but at least it
+works with Supermicro chases with SAS enclosures.
+
+Usage:
+
+(fill later, see source)
+
