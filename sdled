@@ -5,7 +5,7 @@ help="""
     Usage:
     sdled (without options) - display all sd* devices status
     sdled /dev/sd[letter] - display status of requested device
-    sdled /dev/sd[letter] faulty - set led indicator to 'faulty' 
+    sdled /dev/sd[letter] faul - set led indicator to 'faulty' 
                           this WILL NOT make device faulty, just set 
                           enclosure led to 'FAULTY' status.
     sdled /dev/sd[letter] locate - set led indicator to 'locate' status
@@ -17,17 +17,24 @@ def sd_list():
     """
     return filter(lambda x: "sd" in x, os.listdir("/sys/block"))
 
+def go_to_enc(dev):
+    enc="enclosure_device" #magik string to access enclosure data
+    try:
+        os.chdir("/sys/block/"+dev+"/device")
+        l=filter(lambda x: enc in x, os.listdir("."))
+        os.chdir(l[0])
+        return True
+    except:
+        return False
+
+
 def get_status(dev):
     """
        return status ("N/A", "Off", "Faul", "Locate") for given device
     """
-    enc="enclosure_device" #magik string to access enclosure data
-    os.chdir("/sys/block/"+dev+"/device")
-    l=filter(lambda x: enc in x, os.listdir("."))
-    if not l:
+    if not go_to_enc(dev):
         return "N/A" #No magic path, can't get status
     try:
-        os.chdir(l[0])
         fault=int(file("fault",'r').readline())
         locate=int(file("locate",'r').readline())
         if(fault):
@@ -38,14 +45,33 @@ def get_status(dev):
     except:
         return "N/A" #any error means we can't get status
 
+def set_status(device, status):
+    if not go_to_enc(device):
+        return False
+    if not status in ("fault", "locate"):
+        return False
+    f=file(status, "w")
+    f.write("1")
+    f.close()
+    return True #no try/exect - if something wrong, do not hide it
 
 if len(sys.argv)<2:
     print "DEVICE NAME      STATUS"
     for a in sd_list():
         print ("/dev/"+a).ljust(17),  get_status(a)
-	sys.exit(0)
+    sys.exit(0)
 if len(sys.argv)<3:
     if sys.argv[1]=="--help" or sys.argv[1]=="-h":
         print help
         sys.exit(0)
+
+if ("/" in sys.argv[1]):
+    device = sys.argv[1].split('/')[-1]
+else:
+    device = sys.argv[1]
+if len(sys.argv<4):
+    print get_status(device)
+    sys.exit(-1)
+
+set_status(device,sys.argv[2])
 
