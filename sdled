@@ -54,7 +54,7 @@ def set_status(device, status):
         return False
     if status == "off":
        file("locate","w").write('0')
-       return true
+       return True
     if not status in ("fault", "locate"):
         return False
     file(status, "w").write('1')
@@ -75,7 +75,7 @@ if ("/" in sys.argv[1]):
 else:
     device = sys.argv[1]
 
-if len(sys.argv)==4:
+if len(sys.argv)==2:
     print get_status(device)
     sys.exit(-1)
 
