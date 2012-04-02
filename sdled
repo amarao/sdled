@@ -55,13 +55,13 @@ def get_status(dev):
 
 def set_status(device, status):
     if not go_to_enc(device):
-        print "Device not supported"
+        print "Device %s not supported"%(device)
         return False
     if status == "off":
        file("locate","w").write('0')
        return True
     if not status in ("fault", "locate"):
-        print "bad status (use off, fault or locate"
+        print "bad status. Use: off, fault, locate"
         return False
     file(status, "w").write('1')
     return True #no try/exect - if something wrong, do not hide it
