@@ -9,6 +9,10 @@ help="""
                           this WILL NOT make device faulty, just set 
                           enclosure led to 'FAULTY' status.
     sdled /dev/sd[letter] locate - set led indicator to 'locate' status
+    sdled /dev/sd[letter] off - turn of faulty/locate status
+
+    sample usage : sdled /dev/sde (show status)
+                   sdled /dev/sde locate (turn on 'locate' indicator)
 """
 
 def sd_list():
@@ -48,11 +52,12 @@ def get_status(dev):
 def set_status(device, status):
     if not go_to_enc(device):
         return False
+    if status == "off":
+       file("locate","w").write('0')
+       return true
     if not status in ("fault", "locate"):
         return False
-    f=file(status, "w")
-    f.write("1")
-    f.close()
+    file(status, "w").write('1')
     return True #no try/exect - if something wrong, do not hide it
 
 if len(sys.argv)<2:
@@ -60,7 +65,7 @@ if len(sys.argv)<2:
     for a in sd_list():
         print ("/dev/"+a).ljust(17),  get_status(a)
     sys.exit(0)
-if len(sys.argv)<3:
+if len(sys.argv)==3:
     if sys.argv[1]=="--help" or sys.argv[1]=="-h":
         print help
         sys.exit(0)
@@ -69,7 +74,8 @@ if ("/" in sys.argv[1]):
     device = sys.argv[1].split('/')[-1]
 else:
     device = sys.argv[1]
-if len(sys.argv<4):
+
+if len(sys.argv)==4:
     print get_status(device)
     sys.exit(-1)
 
