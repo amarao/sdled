@@ -1,12 +1,14 @@
 #!/usr/bin/python
-import os
+import os,sys
 
 help="""
     Usage:
     sdled (without options) - display all sd* devices status
     sdled /dev/sd[letter] - display status of requested device
-    sdled /dev/sd[letter] faulty - set led indicator to 'faulty' (this WILL NOT MAKE it faulty, just set enclosure led to 'FAULTY' status)
-    sdled /dev/sd[letter locate - set led indicator to 'locate' status
+    sdled /dev/sd[letter] faulty - set led indicator to 'faulty' 
+                          this WILL NOT make device faulty, just set 
+                          enclosure led to 'FAULTY' status.
+    sdled /dev/sd[letter] locate - set led indicator to 'locate' status
 """
 
 def sd_list():
@@ -25,6 +27,7 @@ def get_status(dev):
     if not l:
         return "N/A" #No magic path, can't get status
     try:
+        os.chdir(l[0])
         fault=int(file("fault",'r').readline())
         locate=int(file("locate",'r').readline())
         if(fault):
@@ -35,6 +38,14 @@ def get_status(dev):
     except:
         return "N/A" #any error means we can't get status
 
-for a in sd_list():
-    print ("/dev/"+a).ljust(10),  get_status(a)
+
+if len(sys.argv)<2:
+    print "DEVICE NAME      STATUS"
+    for a in sd_list():
+        print ("/dev/"+a).ljust(17),  get_status(a)
+	sys.exit(0)
+if len(sys.argv)<3:
+    if sys.argv[1]=="--help" or sys.argv[1]=="-h":
+        print help
+        sys.exit(0)
 
