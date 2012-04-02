@@ -5,5 +5,15 @@ works with Supermicro chases with SAS enclosures.
 
 Usage:
 
-(fill later, see source)
+    Usage:
+    sdled (without options) - display all sd* devices status
+    sdled /dev/sd[letter] - display status of requested device
+    sdled /dev/sd[letter] faul - set led indicator to 'faulty' 
+                          this WILL NOT make device faulty, just set 
+                          enclosure led to 'FAULTY' status.
+    sdled /dev/sd[letter] locate - set led indicator to 'locate' status
+    sdled /dev/sd[letter] off - turn of faulty/locate status
+
+    sample usage : sdled /dev/sde (show status)
+                   sdled /dev/sde locate (turn on 'locate' indicator)
 
