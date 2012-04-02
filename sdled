@@ -82,7 +82,8 @@ if sys.argv[1]=="ALL":
            set_status(d,sys.argv[2])
        except:
            pass
-
+   os.exit(0)
+   
 if ("/" in sys.argv[1]):
     device = sys.argv[1].split('/')[-1]
 else:
