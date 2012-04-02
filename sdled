@@ -69,7 +69,7 @@ def set_status(device, status):
 if len(sys.argv)<2:
     print "DEVICE NAME      STATUS"
     for d in sd_list():
-        print ("/dev/"+d).ljust(17),  get_status(a)
+        print ("/dev/"+d).ljust(17),  get_status(d)
     sys.exit(0)
 if len(sys.argv)==3:
     if sys.argv[1]=="--help" or sys.argv[1]=="-h":
