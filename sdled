@@ -11,6 +11,10 @@ help="""
     sdled /dev/sd[letter] locate - set led indicator to 'locate' status
     sdled /dev/sd[letter] off - turn of faulty/locate status
 
+    sdled ALL off
+    sdled ALL fault
+    sdled ALL locate - turn all devices to that status (note CAPS ALL)
+
     sample usage : sdled /dev/sde (show status)
                    sdled /dev/sde locate (turn on 'locate' indicator)
 """
@@ -42,33 +46,42 @@ def get_status(dev):
         fault=int(file("fault",'r').readline())
         locate=int(file("locate",'r').readline())
         if(fault):
-            return "Fault"
+            return "fault"
         if(locate):
-            return "Locate"
-        return "Off"
+            return "locate"
+        return "off"
     except:
         return "N/A" #any error means we can't get status
 
 def set_status(device, status):
     if not go_to_enc(device):
+        print "Device not supported"
         return False
     if status == "off":
        file("locate","w").write('0')
        return True
     if not status in ("fault", "locate"):
+        print "bad status (use off, fault or locate"
         return False
     file(status, "w").write('1')
     return True #no try/exect - if something wrong, do not hide it
 
 if len(sys.argv)<2:
     print "DEVICE NAME      STATUS"
-    for a in sd_list():
-        print ("/dev/"+a).ljust(17),  get_status(a)
+    for d in sd_list():
+        print ("/dev/"+d).ljust(17),  get_status(a)
     sys.exit(0)
 if len(sys.argv)==3:
     if sys.argv[1]=="--help" or sys.argv[1]=="-h":
         print help
         sys.exit(0)
+
+if sys.argv[1]=="ALL":
+   for d in sd_list():
+       try:
+           set_status(d,sys.argv[2])
+       except:
+           pass
 
 if ("/" in sys.argv[1]):
     device = sys.argv[1].split('/')[-1]

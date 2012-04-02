@@ -3,8 +3,6 @@ sdled allows to see and change led status for multidisk enclosures.
 I'm not sure it will work with every avaible enclosures, but at least it
 works with Supermicro chases with SAS enclosures.
 
-Usage:
-
     Usage:
     sdled (without options) - display all sd* devices status
     sdled /dev/sd[letter] - display status of requested device
@@ -13,6 +11,10 @@ Usage:
                           enclosure led to 'FAULTY' status.
     sdled /dev/sd[letter] locate - set led indicator to 'locate' status
     sdled /dev/sd[letter] off - turn of faulty/locate status
+
+    sdled ALL off
+    sdled ALL fault
+    sdled ALL locate - turn all devices to that status (note CAPS ALL)
 
     sample usage : sdled /dev/sde (show status)
                    sdled /dev/sde locate (turn on 'locate' indicator)
