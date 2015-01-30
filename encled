@@ -46,7 +46,16 @@ def slot_list(enc):
         return list of all slots for given enclosure
         list will contain numbers, not strings
     '''
-    return [int(s.split()[1]) for s in os.listdir(os.path.join(CLASS, enc)) if SLOT in s]
+    slot_list = []
+    for elem in os.listdir(os.path.join(CLASS, enc)):
+        if SLOT in elem:
+            slot_list.append(int(elem.split()[1]))  # naming type 'Slot 01'
+        else:
+            try:
+                slot_list.append(int(elem))  # naming type '001', only numbers pass
+            except ValueError:
+                pass
+    return slot_list
 
 
 def find_name(enc, slot):
@@ -60,8 +69,10 @@ def find_name(enc, slot):
     '''
     name = str(slot)
     for z in range(0, 4):
-        if os.path.isfile(os.path.join(CLASS, enc, SLOT + name, 'type')):
+        if os.path.isfile(os.path.join(CLASS, enc, SLOT + name, 'type')):  # naming type 'Slot 01'
             return os.path.join(CLASS, enc, SLOT + name)
+        if os.path.isfile(os.path.join(CLASS, enc, name, 'type')):  # naming type '001'
+            return os.path.join(CLASS, enc, name)
         name = '0' + name  # try same name with more zeroes at front
     return None
 
@@ -123,8 +134,8 @@ def print_status(enc, slot, status):
         out = out + str(status[0]) + '\t' + str(status[1]) + '\t' + str(status[2])
     else:
         out = out + '(Not available)'
-    out = out + '\n'
-    print out,
+    out = out
+    print ("%s" % out)
 
 
 def list_all():
@@ -159,7 +170,6 @@ if len(sys.argv) < 2:
 if sys.argv[1].upper() == 'ALL':
     for d in devlist:
         set_status(d[2], sys.argv[2].lower())
-    print_status(d[0], d[1], get_status(d[2]))
     sys.exit(0)
 
 if 'sd' in sys.argv[1] or '/dev' in sys.argv[1]:
@@ -174,8 +184,8 @@ if 'sd' in sys.argv[1] or '/dev' in sys.argv[1]:
 
 elif '/' in sys.argv[1]:
     (enc, slot) = sys.argv[1].split('/')
-    path = find_name(enc, slot)
-    dev = (enc, slot, path, get_status(path))
+    path = find_name(enc, int(slot))
+    dev = (enc, int(slot), path, get_status(path))
 else:
     print ("encled: Incorrect enclosure/slot  or device syntax")
     print (HELP)
@@ -185,4 +195,3 @@ if len(sys.argv) < 3:
     print_status(dev[0], dev[1], dev[3])
 else:
     set_status(dev[2], sys.argv[2])
-    print_status(dev[0], dev[1], get_status(dev[2]))
