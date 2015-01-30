@@ -66,6 +66,8 @@ def set_status(device, status):
     file(status, "w").write('1')
     return True #no try/exect - if something wrong, do not hide it
 
+sys.stderr.write("sdled is deprecated. Use encled\n")
+
 if len(sys.argv)<2:
     print "DEVICE NAME      STATUS"
     for d in sd_list():
