@@ -1,21 +1,33 @@
-sdled allows to see and change led status for multidisk enclosures.
+Encled - utility to change location / fault LED for enclosure.
 
-I'm not sure it will work with every avaible enclosures, but at least it
-works with Supermicro chases with SAS enclosures.
+I'm not sure if it works with every avaible enclosures, but at least it
+works with Supermicro chases with SAS enclosures (LSI).
+
+Encled heavily depends on linux kernel's /sys/class/enclosure
+
+Previous name was sdled, but now it supports not only 'sd' devices
+but empty disk slots too.
 
     Usage:
-    sdled (without options) - display all sd* devices status
-    sdled /dev/sd[letter] - display status of requested device
-    sdled /dev/sd[letter] faul - set led indicator to 'faulty' 
-                          this WILL NOT make device faulty, just set 
+
+    encled (without options) - display all slots devices status and disk letter
+    encled enclosure/slot - display status of requested device
+    encled enclosure/slot fault - set led indicator to 'faulty'
+                          this WILL NOT make device faulty, just set
                           enclosure led to 'FAULTY' status.
-    sdled /dev/sd[letter] locate - set led indicator to 'locate' status
-    sdled /dev/sd[letter] off - turn of faulty/locate status
+    encled enclosure/slot locate - set led indicator to 'locate' status
+    encled enclosure/slot off - turn of faulty/locate status
+    encled device locate/fault/off will work with sd device (sda, sde)
 
-    sdled ALL off
-    sdled ALL fault
-    sdled ALL locate - turn all devices to that status (note CAPS ALL)
+    encled ALL off
+    encled ALL fault
+    encled ALL locate - turn all devices to that status (note CAPS ALL)
 
-    sample usage : sdled /dev/sde (show status)
-                   sdled /dev/sde locate (turn on 'locate' indicator)
+    examples:
+        encled 4:0:1:0/12 - show status for enclosure 4:0:1:0 slot 12
+        encled ALL off - disable all indication for all slots in all enclosures
+        encled 5:0:24:0/24 fault - set fault indicator for enclosure 5:0:24:0 slot 24
+        encled 5:0:24:0/12 locate - set location indicator for enclosure 5:0:24:0 slot 12
+    encled sda locate - enable 'locate' for slot with sda block device
+    encled /dev/sdbz fault - enable fault indicator slot with sdbz block device
 
