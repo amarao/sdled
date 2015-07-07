@@ -3,13 +3,12 @@ Upstream-Name: encled
 Source: <url://example.com>
 
 Files: *
-Copyright: <years> <put author's name and email here>
-           <years> <likewise for another author>
-License: GPL-3.0+
+Copyright: 2012-2015 George Shuklin
+License: GPL-3.0+ or GPL-2
 
 Files: debian/*
-Copyright: 2015 amarao <george.shuklin@gmail.com>
-License: GPL-3.0+
+Copyright: 2015 George Shuklin <george.shuklin@gmail.com>
+License: GPL-3.0+ or GPL-2
 
 License: GPL-3.0+
  This program is free software: you can redistribute it and/or modify

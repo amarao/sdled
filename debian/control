@@ -1,7 +1,7 @@
 Source: encled
 Section: admin
 Priority: optional
-Maintainer: amarao <george.shuklin@gmail.com>
+Maintainer: George Shuklin <george.shuklin@gmail.com>
 Build-Depends: debhelper (>= 9)
 Standards-Version: 3.9.6
 Homepage: https://github.com/amarao/sdled
