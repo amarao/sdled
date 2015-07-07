@@ -1,0 +1,78 @@
+.TH encled "8" "Jun 2015" "encled\-0.1" ENCLED
+.SH NAME
+encled \- SCSI Enclosure indicators (SES LED) control
+.SH SYNOPSIS
+.B encled
+[\fI\-\-help\fR] [\fIenslosure/slot|disk name|ALL\fR] [\fIlocate|fault|off\fR]
+.SH DESCRIPTION
+.\" Add any additional description here
+Encled uses information in sysfs from ses.ko module to enumerate and control
+enclosure indication for disks.
+.br
+SES is SCSI Enclosure Services, specialized protocol between enclosure
+(backplane) and HBA (controller). It allows to enable/disable indication
+on hot-swap slots for disks.
+.SH INDICATION TYPES
+There is two types of indication: fault and locate. Third indication (activity)
+unavailable for control from host. If one indicator is enabled, other is 
+automatically disabled. Keywords used: 'fault', 'locate' and 'off'.
+.SH ENUMERATION
+Enclosure enumeration is based on /sys/class/enclosure, and slot number is
+reconstructed from 'Slot' name of enclosure.
+Usually it looks like this: 6:0:23:0/14, where:
+6:0:23:0 is enclosure address, and '/14' is 14th slot.
+Note: Enumeration in encled may differ from sas2ircu or labels on the actual
+backplane. Don't rely on the slot numbers!
+.PP
+.SH DISK NAME
+There is two ways to indicate disk in encled: by using drive name (/dev/sdaz)
+or by using slot number (6:0:24:0/20). Special word 'all' is reserved for
+controlling all indication (command 'encled all off' clears all indication).
+.SH EXAMPLES
+\fIencled /dev/sda fault\fR - enable fault indication for /dev/sda
+.br
+\fIencled /dev/sdfa locate\fR - enable locate indication for /dev/sdfa
+.br
+\fIencled /dev/sdz off\fR - clear indication for /dev/sdz
+.br
+\fIencled /dev/sdg\fR - view status of indication for /dev/sdg
+.br
+\fIencled 3:0:23:0/1 fault\fR - enable fault indication for the Slot 1 in enclosure 3:0:23:0
+.br
+\fIencled 3:0:23:0/2 locate\fR - enable locate indication for the Slot 2 in enclosure 3:0:23:0
+.br
+\fIencled 3:0:23:0/3 off\fR - clear inication for the Slot 3 in enclosure 3:0:23:0
+.br
+\fIencled 3:0:23:0/4\fR - view status of indication for the Slot 4 in enclosure 3:0:23:0
+.br
+\fIencled all fault\fR - enable fault inidcation for all slots in all enclosures
+.br
+\fIencled\fR - view status of all slots in all enclosures.
+.br
+Example of output:
+.br
+ENCLOSURE/SLOT   DEV FAULT_LED   LOCATION_LED
+.br
+----------------------------------------------------
+.br
+6:0:23:0/1  sdd fault_off   locate_off
+.br
+6:0:23:0/2  sde fault_off   locate_off
+.br
+6:0:23:0/3  sdf fault_off    LOCATE_ON
+.br
+6:0:23:0/4  sdg  FAULT_ON   locate_off
+.SH NOTES
+Encled supports only enclosure based devices (SAS/SATA). Desktop SATA controllers
+(AHCI), and direct-attach disks in SCSI are not supported.
+.br
+Older name for encled was sdled.
+.SH AUTHOR
+Written by George Shuklin
+.SH "REPORTING BUGS"
+Report bugs to https://github.com/amarao/sdled
+.SH COPYRIGHT
+Copyright \(co 2012\-2015 George Shuklin
+.br
+This software is distributed under the GPL version 2 or 3. There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
