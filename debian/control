@@ -1,0 +1,23 @@
+Source: encled
+Section: admin
+Priority: optional
+Maintainer: amarao <george.shuklin@gmail.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.6
+Homepage: https://github.com/amarao/sdled
+Vcs-Git: https://github.com/amarao/sdled
+
+Package: encled
+Architecture: any
+Depends: python
+Description: Utility to control enclosure LEDs
+ Encled use features of ses.ko module of kernel 
+ to query and control LED indicators of the enclosure 
+ slots on backplanes of many servers.
+
+ It will works only with SAS/SCSI enclosures and will
+ not work with builtin SATA-controllers.
+
+ Encled was tested with many Supermicro servers and
+ JBODs together with LSI (mpt2sas) HBAs, but it should
+ works with other vendors too.
