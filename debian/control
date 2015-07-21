@@ -10,8 +10,8 @@ Vcs-Git: https://github.com/amarao/sdled
 Package: encled
 Architecture: any
 Depends: python
-Description: Utility to control enclosure LEDs
- Encled use features of ses.ko module of kernel 
+Description: utility to control enclosure LEDs
+ Encled uses features of ses.ko module of kernel 
  to query and control LED indicators of the enclosure 
  slots on backplanes of many servers.
  It will works only with SAS/SCSI enclosures and will
