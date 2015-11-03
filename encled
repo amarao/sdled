@@ -48,8 +48,9 @@ def slot_list(enc):
     '''
     slot_list = []
     for elem in os.listdir(os.path.join(CLASS, enc)):
-        if SLOT in elem:
-            slot_list.append(int(elem.split()[1]))  # naming type 'Slot 01'
+        slot = os.path.join(CLASS, enc, elem)
+        if os.path.isdir(slot) and not os.path.islink(slot) and os.path.isfile(os.path.join(slot, 'type')):
+            slot_list.append(elem)
         else:
             try:
                 slot_list.append(int(elem))  # naming type '001', only numbers pass
@@ -68,6 +69,8 @@ def find_name(enc, slot):
         or None
     '''
     name = str(slot)
+    if os.path.isfile(os.path.join(CLASS, enc, name, 'type')):
+        return os.path.join(CLASS, enc, name)
     for z in range(0, 4):
         if os.path.isfile(os.path.join(CLASS, enc, SLOT + name, 'type')):  # naming type 'Slot 01'
             return os.path.join(CLASS, enc, SLOT + name)
