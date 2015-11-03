@@ -125,7 +125,7 @@ def set_status(path, status):
         file(os.path.join(path, 'fault'), 'w').write('0')
     else:
         print("encled: Wrong status (%s)" % str(status))
-        sys.exit(-1)
+        return -1
 
 
 def print_status(enc, slot, status):
@@ -148,50 +148,56 @@ def list_all():
     return devlist
 
 
-if len(sys.argv) > 1 and sys.argv[1] in ('--help', '-h', '-help', '/?', '?', 'help', '-v', '--version', '-V'):
-    print (HELP)
-    sys.exit(0)
+def main(argv):
+    if len(argv) > 1 and argv[1] in ('--help', '-h', '-help', '/?', '?', 'help', '-v', '--version', '-V'):
+        print (HELP)
+        return(0)
 
-if not os.path.isdir(CLASS):
-    print("encled: Unable to find any enclosure device")
-    sys.exit(-1)
+    if not os.path.isdir(CLASS):
+        print("encled: Unable to find any enclosure device")
+        return(-1)
 
-devlist = list_all()
-if len(sys.argv) < 2:
-    if not devlist:
-        print ("No enclosure devices found")
-        sys.exit(-1)
-    print ("ENCLOSURE/SLOT\tDEV\tFAULT_LED\tLOCATION_LED")
-    print ("-"*52)
-    for d in devlist:
-        print_status(d[0], d[1], d[3])
-    sys.exit(0)
+    devlist = list_all()
+    if len(argv) < 2:
+        if not devlist:
+            print ("No enclosure devices found")
+            return(-1)
+        print ("ENCLOSURE/SLOT\tDEV\tFAULT_LED\tLOCATION_LED")
+        print ("-"*52)
+        for d in devlist:
+            print_status(d[0], d[1], d[3])
+        return(0)
 
-if sys.argv[1].upper() == 'ALL':
-    for d in devlist:
-        set_status(d[2], sys.argv[2].lower())
-    sys.exit(0)
+    if argv[1].upper() == 'ALL':
+        for d in devlist:
+            result = set_status(d[2], argv[2].lower())
+            if not result: return(result)
+        return(0)
 
-if 'sd' in sys.argv[1] or '/dev' in sys.argv[1]:
-    name = sys.argv[1].lower().split('/')[-1]
-    for d in devlist:
-        if(d[3][0] == name):
-            dev = d
-            break
+    if 'sd' in argv[1] or '/dev' in argv[1]:
+        name = argv[1].lower().split('/')[-1]
+        for d in devlist:
+            if(d[3][0] == name):
+                dev = d
+                break
+        else:
+            print("encled: Unable to find device %s in enclosure slots. (note: on-board SATA ports are not supported)" % str(name))
+            return(-1)
+
+    elif '/' in argv[1]:
+        (enc, slot) = argv[1].split('/')
+        path = find_name(enc, slot)
+        dev = (enc, slot, path, get_status(path))
     else:
-        print("encled: Unable to find device %s in enclosure slots. (note: on-board SATA ports are not supported)" % str(name))
-        sys.exit(-1)
+        print ("encled: Incorrect enclosure/slot  or device syntax")
+        print (HELP)
+        return(-1)
 
-elif '/' in sys.argv[1]:
-    (enc, slot) = sys.argv[1].split('/')
-    path = find_name(enc, int(slot))
-    dev = (enc, int(slot), path, get_status(path))
-else:
-    print ("encled: Incorrect enclosure/slot  or device syntax")
-    print (HELP)
-    sys.exit(-1)
+    if len(argv) < 3:
+        print_status(dev[0], dev[1], dev[3])
+    else:
+        set_status(dev[2], argv[2])
 
-if len(sys.argv) < 3:
-    print_status(dev[0], dev[1], dev[3])
-else:
-    set_status(dev[2], sys.argv[2])
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))
