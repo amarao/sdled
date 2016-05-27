@@ -174,7 +174,7 @@ def main(argv):
     if argv[1].upper() == 'ALL':
         for d in devlist:
             result = set_status(d[2], argv[2].lower())
-            if not result: return(result)
+            if result: return(result)
         return(0)
 
     if 'sd' in argv[1] or '/dev' in argv[1]:
