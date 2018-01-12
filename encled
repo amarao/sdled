@@ -126,6 +126,7 @@ def set_status(path, status):
         file(os.path.join(path, 'locate'), 'w').write('1')
     elif status == 'off':
         file(os.path.join(path, 'fault'), 'w').write('0')
+        file(os.path.join(path, 'locate'), 'w').write('0')
     else:
         print("encled: Wrong status (%s)" % str(status))
         return -1
