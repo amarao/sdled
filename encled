@@ -178,8 +178,10 @@ def main(argv):
             if result: return(result)
         return(0)
 
-    if 'sd' in argv[1] or '/dev' in argv[1]:
-        name = argv[1].lower().split('/')[-1]
+    #if 'sd' in argv[1] or '/dev' in argv[1]:
+    if os.path.exists(argv[1]):
+	devname = os.path.realpath(argv[1]);
+        name = devname.lower().split('/')[-1]
         for d in devlist:
             if(d[3][0] == name):
                 dev = d
