@@ -179,7 +179,7 @@ def main(argv):
         return(0)
 
     if os.path.exists(argv[1]):
-	devname = os.path.realpath(argv[1]);
+        devname = os.path.realpath(argv[1]);
         name = devname.lower().split('/')[-1]
         for d in devlist:
             if(d[3][0] == name):
