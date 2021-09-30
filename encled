@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import os
 import sys
 
@@ -18,6 +18,7 @@ HELP = """
     encled device locate/fault/off will work with sd device (sda, sde)
 
     encled ALL off
+    encled GOOD off - turns off leds only on devices where fault led is off
     encled ALL fault
     encled ALL locate - turn all devices to that status (note CAPS ALL)
 
@@ -28,6 +29,7 @@ HELP = """
         encled 5:0:24:0/12 locate - set location indicator for enclosure 5:0:24:0 slot 12
     encled sda locate - enable 'locate' for slot with sda block device
     encled /dev/sdbz fault - enable fault indicator slot with sdbz block device
+
 """
 
 CLASS = '/sys/class/enclosure/'
@@ -170,6 +172,16 @@ def main(argv):
         print ("-"*52)
         for d in devlist:
             print_status(d[0], d[1], d[3])
+        return(0)
+
+    if argv[1].upper() == 'GOOD' and argv[2].lower() == 'off':
+        for d in devlist:
+            if ((d[3][1]).upper()).replace(" ", "") != 'FAULT_ON':
+                result = set_status(d[2], argv[2].lower())
+                if result: return(result)
+            elif ((d[3][1]).upper()).replace(" ", "") == 'FAULT_ON' and argv[2].upper().replace(" ", "") == 'LOCATE':
+                result = set_status(d[2], argv[2].lower())     
+                if result: return(result)
         return(0)
 
     if argv[1].upper() == 'ALL':
