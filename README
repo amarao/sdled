@@ -20,6 +20,7 @@ but empty disk slots too.
     encled device locate/fault/off will work with sd device (sda, sde)
 
     encled ALL off
+    encled GOOD off - turns off leds only on devices where fault led is off
     encled ALL fault
     encled ALL locate - turn all devices to that status (note CAPS ALL)
 
