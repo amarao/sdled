@@ -55,13 +55,13 @@ def get_status(dev):
 
 def set_status(device, status):
     if not go_to_enc(device):
-        print "Device %s not supported"%(device)
+        print("Device %s not supported"%(device))
         return False
     if status == "off":
        file("locate","w").write('0')
        return True
     if not status in ("fault", "locate"):
-        print "bad status. Use: off, fault, locate"
+        print("bad status. Use: off, fault, locate")
         return False
     file(status, "w").write('1')
     return True #no try/exect - if something wrong, do not hide it
@@ -69,13 +69,13 @@ def set_status(device, status):
 sys.stderr.write("sdled is deprecated. Use encled\n")
 
 if len(sys.argv)<2:
-    print "DEVICE NAME      STATUS"
+    print("DEVICE NAME      STATUS")
     for d in sd_list():
-        print ("/dev/"+d).ljust(17),  get_status(d)
+        print("/dev/"+d.ljust(17) + get_status(d))
     sys.exit(0)
 if len(sys.argv)==3:
     if sys.argv[1]=="--help" or sys.argv[1]=="-h":
-        print help
+        print(help)
         sys.exit(0)
 
 if sys.argv[1]=="ALL":
@@ -92,7 +92,7 @@ else:
     device = sys.argv[1]
 
 if len(sys.argv)==2:
-    print get_status(device)
+    print(get_status(device))
     sys.exit(-1)
 
 set_status(device,sys.argv[2])
