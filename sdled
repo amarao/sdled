@@ -23,13 +23,13 @@ def sd_list():
     """
     return list of all sd devices in /sys/block
     """
-    return filter(lambda x: "sd" in x, os.listdir("/sys/block"))
+    return [x for x in os.listdir("/sys/block") if "sd" in x]
 
 def go_to_enc(dev):
     enc="enclosure_device" #magik string to access enclosure data
     try:
         os.chdir("/sys/block/"+dev+"/device")
-        l=filter(lambda x: enc in x, os.listdir("."))
+        l=[x for x in os.listdir(".") if enc in x]
         os.chdir(l[0])
         return True
     except:
