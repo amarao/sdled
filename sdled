@@ -5,8 +5,8 @@ help="""
     Usage:
     sdled (without options) - display all sd* devices status
     sdled /dev/sd[letter] - display status of requested device
-    sdled /dev/sd[letter] faul - set led indicator to 'faulty' 
-                          this WILL NOT make device faulty, just set 
+    sdled /dev/sd[letter] faul - set led indicator to 'faulty'
+                          this WILL NOT make device faulty, just set
                           enclosure led to 'FAULTY' status.
     sdled /dev/sd[letter] locate - set led indicator to 'locate' status
     sdled /dev/sd[letter] off - turn of faulty/locate status
@@ -85,7 +85,7 @@ if sys.argv[1]=="ALL":
        except:
            pass
    sys.exit(0)
-   
+
 if ("/" in sys.argv[1]):
     device = sys.argv[1].split('/')[-1]
 else:
@@ -96,4 +96,3 @@ if len(sys.argv)==2:
     sys.exit(-1)
 
 set_status(device,sys.argv[2])
-

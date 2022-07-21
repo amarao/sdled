@@ -180,7 +180,7 @@ def main(argv):
                 result = set_status(d[2], argv[2].lower())
                 if result: return(result)
             elif ((d[3][1]).upper()).replace(" ", "") == 'FAULT_ON' and argv[2].upper().replace(" ", "") == 'LOCATE':
-                result = set_status(d[2], argv[2].lower())     
+                result = set_status(d[2], argv[2].lower())
                 if result: return(result)
         return(0)
 
