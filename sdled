@@ -43,8 +43,8 @@ def get_status(dev):
     if not go_to_enc(dev):
         return "N/A" #No magic path, can't get status
     try:
-        fault=int(file("fault",'r').readline())
-        locate=int(file("locate",'r').readline())
+        fault=int(open("fault",'r').readline())
+        locate=int(open("locate",'r').readline())
         if(fault):
             return "fault"
         if(locate):
@@ -58,12 +58,12 @@ def set_status(device, status):
         print("Device %s not supported"%(device))
         return False
     if status == "off":
-       file("locate","w").write('0')
+       open("locate","w").write('0')
        return True
     if not status in ("fault", "locate"):
         print("bad status. Use: off, fault, locate")
         return False
-    file(status, "w").write('1')
+    open(status, "w").write('1')
     return True #no try/exect - if something wrong, do not hide it
 
 sys.stderr.write("sdled is deprecated. Use encled\n")

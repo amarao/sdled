@@ -101,14 +101,14 @@ def get_status(path):
     except OSError:
         block = '----'
     try:
-        if int(file(os.path.join(path, 'fault'), 'r').readline().strip()):
+        if int(open(os.path.join(path, 'fault'), 'r').readline().strip()):
             fault = ' FAULT_ON'
         else:
             fault = 'fault_off'
     except OSError:
         fault = 'fault_N/A'
     try:
-        if int(file(os.path.join(path, 'locate'), 'r').readline().strip()):
+        if int(open(os.path.join(path, 'locate'), 'r').readline().strip()):
             locate = ' LOCATE_ON'
         else:
             locate = 'locate_off'
@@ -123,12 +123,12 @@ def set_status(path, status):
         status is 'fault' or 'locate' or 'off'
     '''
     if status == 'fault':
-        file(os.path.join(path, 'fault'), 'w').write('1')
+        open(os.path.join(path, 'fault'), 'w').write('1')
     elif status == 'locate' or status == 'loc':
-        file(os.path.join(path, 'locate'), 'w').write('1')
+        open(os.path.join(path, 'locate'), 'w').write('1')
     elif status == 'off':
-        file(os.path.join(path, 'fault'), 'w').write('0')
-        file(os.path.join(path, 'locate'), 'w').write('0')
+        open(os.path.join(path, 'fault'), 'w').write('0')
+        open(os.path.join(path, 'locate'), 'w').write('0')
     else:
         print("encled: Wrong status (%s)" % str(status))
         return -1
