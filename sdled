@@ -55,7 +55,7 @@ def get_status(dev):
 
 def set_status(device, status):
     if not go_to_enc(device):
-        print("Device %s not supported"%(device))
+        print(f"Device {device} not supported")
         return False
     if status == "off":
        open("locate","w").write('0')
