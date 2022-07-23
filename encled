@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os
 import sys
 
@@ -101,14 +101,14 @@ def get_status(path):
     except OSError:
         block = '----'
     try:
-        if int(file(os.path.join(path, 'fault'), 'r').readline().strip()):
+        if int(open(os.path.join(path, 'fault'), 'r').readline().strip()):
             fault = ' FAULT_ON'
         else:
             fault = 'fault_off'
     except OSError:
         fault = 'fault_N/A'
     try:
-        if int(file(os.path.join(path, 'locate'), 'r').readline().strip()):
+        if int(open(os.path.join(path, 'locate'), 'r').readline().strip()):
             locate = ' LOCATE_ON'
         else:
             locate = 'locate_off'
@@ -123,14 +123,14 @@ def set_status(path, status):
         status is 'fault' or 'locate' or 'off'
     '''
     if status == 'fault':
-        file(os.path.join(path, 'fault'), 'w').write('1')
+        open(os.path.join(path, 'fault'), 'w').write('1')
     elif status == 'locate' or status == 'loc':
-        file(os.path.join(path, 'locate'), 'w').write('1')
+        open(os.path.join(path, 'locate'), 'w').write('1')
     elif status == 'off':
-        file(os.path.join(path, 'fault'), 'w').write('0')
-        file(os.path.join(path, 'locate'), 'w').write('0')
+        open(os.path.join(path, 'fault'), 'w').write('0')
+        open(os.path.join(path, 'locate'), 'w').write('0')
     else:
-        print("encled: Wrong status (%s)" % str(status))
+        print(f"encled: Wrong status {status}")
         return -1
 
 
@@ -141,7 +141,7 @@ def print_status(enc, slot, status):
     else:
         out = out + '(Not available)'
     out = out
-    print ("%s" % out)
+    print(out)
 
 
 def list_all():
@@ -180,7 +180,7 @@ def main(argv):
                 result = set_status(d[2], argv[2].lower())
                 if result: return(result)
             elif ((d[3][1]).upper()).replace(" ", "") == 'FAULT_ON' and argv[2].upper().replace(" ", "") == 'LOCATE':
-                result = set_status(d[2], argv[2].lower())     
+                result = set_status(d[2], argv[2].lower())
                 if result: return(result)
         return(0)
 
@@ -197,7 +197,7 @@ def main(argv):
                 dev = d
                 break
         else:
-            print("encled: Unable to find device %s in enclosure slots. (note: on-board SATA ports are not supported)" % str(name))
+            print(f"encled: Unable to find device {name} in enclosure slots. (note: on-board SATA ports are not supported)")
             return(-1)
 
     elif '/' in argv[1]:
