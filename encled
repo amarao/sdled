@@ -210,7 +210,7 @@ def main(argv):
             return(-1)
         print ("ENCLOSURE/SLOT\tDEV\tFAULT_LED\tLOCATION_LED")
         print ("-"*52)
-        for d in devlist:
+        for d in sorted(devlist, key=lambda x: x[2]):
             print_status(d[0], d[1], d[3])
         return(0)
 
@@ -249,7 +249,7 @@ def main(argv):
             return(-1)
 
 
-    for dev in devs:
+    for dev in sorted(devs, key=lambda x: x[2]):
         if len(argv) < 3:
             print_status(dev[0], dev[1], dev[3])
         else:
