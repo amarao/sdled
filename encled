@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
+import re
 
 HELP = """
 
@@ -29,6 +30,12 @@ HELP = """
         encled 5:0:24:0/12 locate - set location indicator for enclosure 5:0:24:0 slot 12
     encled sda locate - enable 'locate' for slot with sda block device
     encled /dev/sdbz fault - enable fault indicator slot with sdbz block device
+
+    Recurse block device stacking hierarchies:
+        encled bcache0 locate - locate all disks used by /dev/bcache0
+        encled md0            - list all disks that are RAID members of /dev/md0
+        encled /dev/vg0/lv    - list all disks that back the logical volume 'vg0/lv'
+        encled /dev/mapper/myluks - list all disks that back an encrypted volume
 
 """
 
@@ -153,6 +160,38 @@ def list_all():
             devlist.append((e, s, path, status))
     return devlist
 
+# Recursively find SCSI devices in block device stacking hierarchies
+# by referencing /sys/block/<dev>/slaves/*
+def find_parent_devs(dev_names):
+    global depth
+
+    new_names = []
+    for dev_path in dev_names:
+        # Read symlinks, like from /dev/mapper/foo:
+        if os.path.islink(dev_path):
+            dev_path = os.readlink(dev_path)
+
+        # Use basename, we only need the name not the path:
+        dev_name = os.path.basename(dev_path)
+
+        # Strip partition numbers:
+        dev_name = re.sub('^(sd[a-z]+)\d*$', lambda x: x.group(1), dev_name)
+
+        slave_path = '/sys/block/' + dev_name + '/slaves/'
+        if re.match('^sd[a-z]+$', dev_name):
+            new_names.append(dev_name)
+        elif os.path.exists(slave_path):
+            new_names += find_parent_devs(os.listdir(slave_path))
+
+    dev_names += new_names
+
+    # Only return SCSI devices:
+    sd = []
+    for dev in dev_names:
+        if re.match('^sd[a-z]+$', dev):
+            sd.append(dev)
+
+    return set(sd)
 
 def main(argv):
     if len(argv) > 1 and argv[1] in ('--help', '-h', '-help', '/?', '?', 'help', '-v', '--version', '-V'):
@@ -164,6 +203,7 @@ def main(argv):
         return(-1)
 
     devlist = list_all()
+    devs = []
     if len(argv) < 2:
         if not devlist:
             print ("No enclosure devices found")
@@ -190,29 +230,30 @@ def main(argv):
             if result: return(result)
         return(0)
 
-    if 'sd' in argv[1] or '/dev' in argv[1]:
-        name = argv[1].lower().split('/')[-1]
-        for d in devlist:
-            if(d[3][0] == name):
-                dev = d
-                break
-        else:
-            print(f"encled: Unable to find device {name} in enclosure slots. (note: on-board SATA ports are not supported)")
-            return(-1)
-
-    elif '/' in argv[1]:
+    if re.match('^\d+:\d+:\d+:\d+/Slot\d+$', argv[1]):
         (enc, slot) = argv[1].split('/')
         path = find_name(enc, slot)
         dev = (enc, slot, path, get_status(path))
+        devs.append(dev)
+        if not len(devs):
+            print ("encled: Incorrect enclosure/slot  or device syntax")
+            print (HELP)
+            return(-1)
     else:
-        print ("encled: Incorrect enclosure/slot  or device syntax")
-        print (HELP)
-        return(-1)
+        names = find_parent_devs([ argv[1] ])
+        for d in devlist:
+            if(d[3][0] in names):
+                devs.append(d)
+        if not len(devs):
+            print(f"encled: Unable to find device {argv[1]} in enclosure slots. (note: on-board SATA ports are not supported)")
+            return(-1)
 
-    if len(argv) < 3:
-        print_status(dev[0], dev[1], dev[3])
-    else:
-        set_status(dev[2], argv[2])
+
+    for dev in devs:
+        if len(argv) < 3:
+            print_status(dev[0], dev[1], dev[3])
+        else:
+            set_status(dev[2], argv[2])
 
 
 if __name__ == '__main__':
