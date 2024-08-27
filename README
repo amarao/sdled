@@ -1,6 +1,6 @@
 Encled - utility to change location / fault LED for enclosure.
 
-I'm not sure if it works with every avaible enclosures, but at least it
+I'm not sure if it works with every available enclosures, but at least it
 works with Supermicro chases with SAS enclosures (LSI).
 
 Encled heavily depends on linux kernel's /sys/class/enclosure
@@ -16,7 +16,7 @@ but empty disk slots too.
                           this WILL NOT make device faulty, just set
                           enclosure led to 'FAULTY' status.
     encled enclosure/slot locate - set led indicator to 'locate' status
-    encled enclosure/slot off - turn of faulty/locate status
+    encled enclosure/slot off - turn off faulty/locate status
     encled device locate/fault/off will work with sd device (sda, sde)
 
     encled ALL off
@@ -31,4 +31,3 @@ but empty disk slots too.
         encled 5:0:24:0/12 locate - set location indicator for enclosure 5:0:24:0 slot 12
     encled sda locate - enable 'locate' for slot with sda block device
     encled /dev/sdbz fault - enable fault indicator slot with sdbz block device
-

@@ -14,7 +14,10 @@ HELP = """
                           this WILL NOT make device faulty, just set
                           enclosure led to 'FAULTY' status.
     encled enclosure/slot locate - set led indicator to 'locate' status
-    encled enclosure/slot off - turn of faulty/locate status
+    encled enclosure/slot off - turn off faulty/locate status
+    encled enclosure/slot fault_off - turn off fault status
+    encled enclosure/slot locate_off - turn off locate status
+
     encled device locate/fault/off will work with sd device (sda, sde)
 
     encled ALL off
@@ -128,6 +131,10 @@ def set_status(path, status):
         open(os.path.join(path, 'locate'), 'w').write('1')
     elif status == 'off':
         open(os.path.join(path, 'fault'), 'w').write('0')
+        open(os.path.join(path, 'locate'), 'w').write('0')
+    elif status == 'fault_off':
+        open(os.path.join(path, 'fault'), 'w').write('0')
+    elif status == 'locate_off':
         open(os.path.join(path, 'locate'), 'w').write('0')
     else:
         print(f"encled: Wrong status {status}")
