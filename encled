@@ -14,7 +14,7 @@ HELP = """
                           this WILL NOT make device faulty, just set
                           enclosure led to 'FAULTY' status.
     encled enclosure/slot locate - set led indicator to 'locate' status
-    encled enclosure/slot off - turn of faulty/locate status
+    encled enclosure/slot off - turn off faulty/locate status
     encled device locate/fault/off will work with sd device (sda, sde)
 
     encled ALL off

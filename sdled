@@ -9,7 +9,7 @@ help="""
                           this WILL NOT make device faulty, just set
                           enclosure led to 'FAULTY' status.
     sdled /dev/sd[letter] locate - set led indicator to 'locate' status
-    sdled /dev/sd[letter] off - turn of faulty/locate status
+    sdled /dev/sd[letter] off - turn off faulty/locate status
 
     sdled ALL off
     sdled ALL fault

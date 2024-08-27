@@ -3,7 +3,7 @@
 encled \- SCSI Enclosure indicators (SES LED) control
 .SH SYNOPSIS
 .B encled
-[\fI\-\-help\fR] [\fIenslosure/slot|disk name|ALL\fR] [\fIlocate|fault|off\fR]
+[\fI\-\-help\fR] [\fIenclosure/slot|disk name|ALL\fR] [\fIlocate|fault|off\fR]
 .SH DESCRIPTION
 .\" Add any additional description here
 Encled uses information in sysfs from ses.ko module to enumerate and control
@@ -14,7 +14,7 @@ SES is SCSI Enclosure Services, specialized protocol between enclosure
 on hot-swap slots for disks.
 .SH INDICATION TYPES
 There is two types of indication: fault and locate. Third indication (activity)
-unavailable for control from host. If one indicator is enabled, other is 
+unavailable for control from host. If one indicator is enabled, other is
 automatically disabled. Keywords used: 'fault', 'locate' and 'off'.
 .SH ENUMERATION
 Enclosure enumeration is based on /sys/class/enclosure, and slot number is
@@ -27,7 +27,7 @@ backplane. Don't rely on the slot numbers!
 .SH DISK NAME
 There is two ways to indicate disk in encled: by using drive name (/dev/sdaz)
 or by using slot number (6:0:24:0/20). Special word 'all' is reserved for
-controlling all indication (command 'encled all off' clears all indication).
+controlling all indications (command 'encled all off' clears all indications).
 .SH EXAMPLES
 \fIencled /dev/sda fault\fR - enable fault indication for /dev/sda
 .br
@@ -41,11 +41,11 @@ controlling all indication (command 'encled all off' clears all indication).
 .br
 \fIencled 3:0:23:0/2 locate\fR - enable locate indication for the Slot 2 in enclosure 3:0:23:0
 .br
-\fIencled 3:0:23:0/3 off\fR - clear inication for the Slot 3 in enclosure 3:0:23:0
+\fIencled 3:0:23:0/3 off\fR - clear indication for the Slot 3 in enclosure 3:0:23:0
 .br
 \fIencled 3:0:23:0/4\fR - view status of indication for the Slot 4 in enclosure 3:0:23:0
 .br
-\fIencled all fault\fR - enable fault inidcation for all slots in all enclosures
+\fIencled all fault\fR - enable fault indication for all slots in all enclosures
 .br
 \fIencled\fR - view status of all slots in all enclosures.
 .br
