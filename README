@@ -17,7 +17,12 @@ but empty disk slots too.
                           enclosure led to 'FAULTY' status.
     encled enclosure/slot locate - set led indicator to 'locate' status
     encled enclosure/slot off - turn off faulty/locate status
+    encled enclosure/slot fault_off - turn off fault status
+    encled enclosure/slot locate_off - turn off locate status
+
     encled device locate/fault/off will work with sd device (sda, sde)
+    encled uuid locate/fault/off will work with partuuid or disk uuid
+    encled serial locate/fault/off will work with disk serial number
 
     encled ALL off
     encled GOOD off - turns off leds only on devices where fault led is off
@@ -31,3 +36,5 @@ but empty disk slots too.
         encled 5:0:24:0/12 locate - set location indicator for enclosure 5:0:24:0 slot 12
     encled sda locate - enable 'locate' for slot with sda block device
     encled /dev/sdbz fault - enable fault indicator slot with sdbz block device
+    encled 3e61c7a8-deb6-11ed-92b5-00074371a6d0 locate - enable 'locate' for slot with  this partition UUID
+    encled 8ABCDEF locate - enable 'locate' for slot with this disk serial number
