@@ -3,7 +3,7 @@
 encled \- SCSI Enclosure indicators (SES LED) control
 .SH SYNOPSIS
 .B encled
-[\fI\-\-help\fR] [\fIenclosure/slot|disk name|ALL\fR] [\fIlocate|fault|off\fR]
+[\fI\-\-help\fR] [\fIenclosure/slot|disk_name|serial_number|ALL\fR] [\fIlocate|fault|off|locate_off|fault_off\fR]
 .SH DESCRIPTION
 .\" Add any additional description here
 Encled uses information in sysfs from ses.ko module to enumerate and control
@@ -14,7 +14,7 @@ SES is SCSI Enclosure Services, specialized protocol between enclosure
 on hot-swap slots for disks.
 .SH INDICATION TYPES
 There is two types of indication: fault and locate. Third indication (activity)
-unavailable for control from host. If one indicator is enabled, other is
+is unavailable for control from host. If one indicator is enabled, other is
 automatically disabled. Keywords used: 'fault', 'locate' and 'off'.
 .SH ENUMERATION
 Enclosure enumeration is based on /sys/class/enclosure, and slot number is
@@ -25,9 +25,18 @@ Note: Enumeration in encled may differ from sas2ircu or labels on the actual
 backplane. Don't rely on the slot numbers!
 .PP
 .SH DISK NAME
-There is two ways to indicate disk in encled: by using drive name (/dev/sdaz)
-or by using slot number (6:0:24:0/20). Special word 'all' is reserved for
-controlling all indications (command 'encled all off' clears all indications).
+There are several ways to indicate a disk in encled:
+.IP \[bu]
+by using drive name (/dev/sdaz) or a partition name (/dev/sdaz2)
+.IP \[bu]
+by using slot number (6:0:24:0/20)
+.IP \[bu]
+by using disk or partition UUID (/dev/disk/by-uuid or /dev/disk/by-partuuid)
+.IP \[bu]
+by using serial number.
+.IP \[bu]
+by using the special word 'all' to control all slots
+(command 'encled all off' clears all indications).
 .SH EXAMPLES
 \fIencled /dev/sda fault\fR - enable fault indication for /dev/sda
 .br
@@ -64,9 +73,13 @@ ENCLOSURE/SLOT   DEV FAULT_LED   LOCATION_LED
 .br
 6:0:23:0/4  sdg  FAULT_ON   locate_off
 .SH NOTES
-Encled supports only enclosure based devices (SAS/SATA). Desktop SATA controllers
-(AHCI), and direct-attach disks in SCSI are not supported.
-.br
+.IP \[bu]
+Encled supports only enclosure based devices (SAS/SATA).
+.IP \[bu]
+Desktop SATA controllers (AHCI), and direct-attach disks in SCSI are not supported.
+.IP \[bu]
+The software has been tested with Supermicro and AIC backplanes with LSI chips.
+.IP \[bu]
 Older name for encled was sdled.
 .SH AUTHOR
 Written by George Shuklin

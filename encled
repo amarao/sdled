@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import os
+import re
+import subprocess
 import sys
 
 HELP = """
@@ -19,6 +21,8 @@ HELP = """
     encled enclosure/slot locate_off - turn off locate status
 
     encled device locate/fault/off will work with sd device (sda, sde)
+    encled uuid locate/fault/off will work with partuuid or disk uuid
+    encled serial locate/fault/off will work with disk serial number
 
     encled ALL off
     encled GOOD off - turns off leds only on devices where fault led is off
@@ -32,6 +36,8 @@ HELP = """
         encled 5:0:24:0/12 locate - set location indicator for enclosure 5:0:24:0 slot 12
     encled sda locate - enable 'locate' for slot with sda block device
     encled /dev/sdbz fault - enable fault indicator slot with sdbz block device
+    encled 3e61c7a8-deb6-11ed-92b5-00074371a6d0 locate - enable 'locate' for slot with  this partition UUID
+    encled 8ABCDEF locate - enable 'locate' for slot with this disk serial number
 
 """
 
@@ -84,6 +90,62 @@ def find_name(enc, slot):
         name = '0' + name  # try same name with more zeroes at front
     return None
 
+def find_disk( a_disk_name ):
+    '''
+        Explore /dev/sd* and /dev/disk/* to find hard disk device
+        If a hard disk is found then
+            return a string like "/dev/sdXX"
+        else
+            return None
+    '''
+    # remove /dev prefix if any
+    a_disk_name = os.path.basename( a_disk_name )
+
+    # create subdirectory list from /dev/disk/*
+    disk_directories = [ os.path.join("/dev/disk/",d) for d in os.listdir("/dev/disk/") ]
+    disk_directories.append( "/dev/" )
+
+    for subdir_path in disk_directories:
+        files = os.listdir( subdir_path )
+        for f in files:
+            if re.search(a_disk_name, f, re.IGNORECASE): # the file match
+                device_path = os.path.join(subdir_path, f)
+                absolute_device_path = os.path.realpath( device_path )
+#               print( "Found %s" % absolute_path )
+
+                # remove trailing digits to get disk device instead of partition device
+                absolute_device_path = re.sub("\d+", "", absolute_device_path)
+                return absolute_device_path
+#    print( "INFO: the disk %s has not been found\n" % a_disk_name )
+    return None
+
+
+def find_serial( a_serial_number ):
+    '''
+        Find hard disk device by serial number
+        if found
+           return sd device (for example /dev/sde)
+        else
+            return None
+    '''
+    # use lsblk to get all the serial numbers
+    lsblk_command = '/usr/bin/lsblk --nodeps -o name,serial'
+    lsblk_output = subprocess.check_output( lsblk_command.split(" ") )
+    lsblk_lines = lsblk_output.decode('utf-8').splitlines()
+
+    # parse lsblk lines
+    for line in lsblk_lines:
+        tokens = line.rsplit()
+        if len(tokens) != 2:
+            continue # skip lines without serial number
+        blk_device, blk_serial = tuple(tokens)
+        # search a_serial_number in blk_serial
+        if re.search(a_serial_number, blk_serial, re.IGNORECASE):
+            return blk_device
+
+#   print("INFO: the serial number %s has not been found" % a_serial_number)
+    return None
+
 
 def get_status(path):
     '''
@@ -125,6 +187,9 @@ def set_status(path, status):
         Set status for given path
         status is 'fault' or 'locate' or 'off'
     '''
+    # convert status to lower case
+    status = status.lower()
+
     if status == 'fault':
         open(os.path.join(path, 'fault'), 'w').write('1')
     elif status == 'locate' or status == 'loc':
@@ -196,6 +261,14 @@ def main(argv):
             result = set_status(d[2], argv[2].lower())
             if result: return(result)
         return(0)
+
+    # search disk device
+    disk_device = find_serial( argv[1] )  # by serial number
+    if not disk_device:
+        disk_device = find_disk( argv[1] )  # by /dev/disk/
+
+    if disk_device: # a hard disk device has been found
+        argv[1] = disk_device # overwrite argv[1] with
 
     if 'sd' in argv[1] or '/dev' in argv[1]:
         name = argv[1].lower().split('/')[-1]
